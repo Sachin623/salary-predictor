@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Predictor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .left {
+            width: 50%;
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .left h1 {
+            margin-bottom: 10px;
+        }
+        .left p {
+            margin-bottom: 20px;
+        }
+        .explore-btn {
+            background: white;
+            color: #007BFF;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+        .form-container {
+            background: white;
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: left;
+        }
+        .form-container label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        .form-container input, .form-container select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .predict-btn {
+            width: 100%;
+            background: #0056b3;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .right {
+            width: 50%;
+            background: #e63946;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .salary-box {
+            background: white;
+            color: red;
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            background: white;
+            width: 80%;
+            margin: 0 auto;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        canvas {
+            width: 100% !important;
+            height: 250px !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Left Section -->
+    <div class="left">
+        <h1>Salary Predictor</h1>
+        <p>Click below to estimate employee salary based on input parameters.</p>
+        <button class="explore-btn">Explore Now</button>
+
+        <div class="form-container">
+            <label>Age</label>
+            <input type="number" id="age" value="32">
+
+            <label>Gender</label>
+            <select id="gender">
+                <option>Male</option>
+                <option>Female</option>
+            </select>
+
+            <label>Education Level</label>
+            <select id="education">
+                <option>Bachelors</option>
+                <option>Masters</option>
+                <option>PhD</option>
+            </select>
+
+            <label>Job Title</label>
+            <select id="job">
+                <option>Project Manager</option>
+                <option>Software Engineer</option>
+                <option>Data Scientist</option>
+            </select>
+
+            <label>Years of Experience</label>
+            <input type="number" id="experience" value="8">
+
+            <button class="predict-btn" onclick="predictSalary()">Predict Salary</button>
+        </div>
+    </div>
+
+    <!-- Right Section -->
+    <div class="right">
+        <h2>Prediction Output</h2>
+        <div id="salaryOutput" class="salary-box">Predicted Salary: ₹ 76656</div>
+        <div class="chart-container">
+            <h3 style="color:black; text-align:left;">Graph: Salary vs Experience</h3>
+            <canvas id="salaryChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+let chart;
+
+function predictSalary() {
+    // Get inputs
+    let experience = parseInt(document.getElementById("experience").value);
+    let education = document.getElementById("education").value;
+    let job = document.getElementById("job").value;
+
+    // Salary calculation (mock formula)
+    let base = 20000;
+    let expFactor = experience * 3000;
+    let eduFactor = (education === "Masters") ? 10000 : (education === "PhD") ? 20000 : 0;
+    let jobFactor = (job === "Project Manager") ? 15000 : (job === "Data Scientist") ? 12000 : 8000;
+
+    let predictedSalary = base + expFactor + eduFactor + jobFactor;
+
+    // Update salary output
+    document.getElementById("salaryOutput").textContent = "Predicted Salary: ₹ " + predictedSalary.toLocaleString();
+
+    // Update Chart
+    updateChart(experience, predictedSalary);
+}
+
+function updateChart(exp, salary) {
+    const ctx = document.getElementById('salaryChart').getContext('2d');
+
+    if (chart) {
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [exp + " Years"],
+            datasets: [{
+                label: 'Salary',
+                data: [salary],
+                backgroundColor: 'rgba(255, 99, 132, 0.7)'
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+}
+
+// Initial chart load
+updateChart(8, 76656);
+</script>
+
+</body>
+</html>
